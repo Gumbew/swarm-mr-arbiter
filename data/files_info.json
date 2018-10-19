@@ -1,0 +1,32 @@
+{
+	"files": [{
+			"FileName": "/a/b.txt",
+			"Lock": false,
+			"LastFragmentBlockSize": 1024,
+			"FileFragments": [{
+					"DataNodeAdress": "127.0.0.1:8011",
+					"FragmentID": 1
+				},
+				{
+					"DataNodeAdress": "127.0.0.1:8012",
+					"FragmentID": 2
+				}
+			]
+
+		},
+		{
+			"FileName": "/a/c.txt",
+			"Lock": false,
+			"LastFragmentBlockSize": 1024,
+			"FileFragments": [{
+					"DataNodeAdress": "127.0.0.1:8012",
+					"FragmentID": 1
+				},
+				{
+					"DataNodeAdress": "127.0.0.1:8011",
+					"FragmentID": 2
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,11 @@
+{
+	"DataNodes": [{
+			"DataNodeID": 1,
+			"DataNodeAdress": "127.0.0.1:8011"
+		},
+		{
+			"DataNodeID": 2,
+			"DataNodeAdress": "127.0.0.1:8012"
+		}
+	]
+}
