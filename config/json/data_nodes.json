@@ -1,11 +1,11 @@
 {
-	"DataNodes": [{
-			"DataNodeID": 1,
-			"DataNodeAdress": "127.0.0.1:8011"
+	"data_nodes": [{
+			"data_node_id": 1,
+			"data_node_address": "127.0.0.1:8011"
 		},
 		{
-			"DataNodeID": 2,
-			"DataNodeAdress": "127.0.0.1:8012"
+			"data_node_id": 2,
+			"data_node_address": "127.0.0.1:8012"
 		}
 	]
 }

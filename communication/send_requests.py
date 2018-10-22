@@ -1,2 +1,2 @@
-#Send tasks to datanodes like Map(), Shafle(), Reduce() etc.
+#Send tasks to datanodes like Map(), Shaffle(), Reduce() etc.
 #Send request to mkfile to datanodes
