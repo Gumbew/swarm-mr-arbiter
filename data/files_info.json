@@ -4,12 +4,10 @@
 			"lock": false,
 			"last_fragment_block_size": 1024,
 			"file_fragments": [{
-					"data_node_address": "127.0.0.1:8011",
 					"data_node_id": 1,
 					"fragment_id": 1
 				},
 				{
-					"data_node_address": "127.0.0.1:8012",
 					"data_node_id": 2,
 					"fragment_id": 2
 				}
@@ -21,12 +19,10 @@
 			"lock": false,
 			"last_fragment_block_size": 1024,
 			"file_fragments": [{
-					"data_node_address": "127.0.0.1:8012",
 					"data_node_id": 2,
 					"fragment_id": 1
 				},
 				{
-					"data_node_address": "127.0.0.1:8011",
 					"data_node_id": 1,
 					"fragment_id": 2
 				}
