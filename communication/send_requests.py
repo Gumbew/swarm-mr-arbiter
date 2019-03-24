@@ -9,8 +9,10 @@ def make_file(file_name):
     json_data = open(os.path.dirname(__file__) + "\\..\\config\\json\\data_nodes.json")
     data = json.load(json_data)
     json_data.close()
-    diction = {}
-    diction["file_name"] = file_name
+    diction = dict()
+    diction["make_file"] ={
+        "file_name": file_name
+    }
     for item in data["data_nodes"]:
         url = 'http://' + item["data_node_address"]
 
