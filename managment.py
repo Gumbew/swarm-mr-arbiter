@@ -34,7 +34,8 @@ class Handler(server.BaseHTTPRequestHandler):
         if 'map' in content:
 
             json_data_obj = content['map']
-            send_requests.make_file(json_data_obj["dest_file"])
+            #print(json_data_obj)
+            send_requests.make_file(json_data_obj["destination_file"])
             json_data_obj = dict()
             json_data_obj['distribution'] = data['distribution']
 
