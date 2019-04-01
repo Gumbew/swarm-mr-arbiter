@@ -1,32 +1,29 @@
 {
-	"files": [{
-			"file_name": "/a/b.txt",
-			"lock": false,
-			"last_fragment_block_size": 1024,
-			"file_fragments": [{
-					"data_node_id": 1,
-					"fragment_id": 1
-				},
-				{
-					"data_node_id": 2,
-					"fragment_id": 2
-				}
-			]
-
-		},
-		{
-			"file_name": "/a/c.txt",
-			"lock": false,
-			"last_fragment_block_size": 1024,
-			"file_fragments": [{
-					"data_node_id": 2,
-					"fragment_id": 1
-				},
-				{
-					"data_node_id": 1,
-					"fragment_id": 2
-				}
-			]
-		}
-	]
+    "files": [
+        {
+            "file_name": "C:/Users/smart/workspace/KURSOVA/swarm-mr-client\\..\\..\\client_data\\out.txt",
+            "lock": false,
+            "last_fragment_block_size": 1024,
+            "file_fragments": [
+                {
+                    "1": "f1"
+                },
+                {
+                    "1": "f2"
+                },
+                {
+                    "1": "f3"
+                },
+                {
+                    "1": "f4"
+                },
+                {
+                    "1": "f5"
+                },
+                {
+                    "1": "f6"
+                }
+            ]
+        }
+    ]
 }
