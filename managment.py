@@ -53,20 +53,47 @@ class Handler(server.BaseHTTPRequestHandler):
 
             json_data_obj['distribution'] = data['distribution']
 
-        elif 'map' in content:
+        elif 'map_reduce' in content:
 
-            json_data_obj = content['map']
-            #print(json_data_obj)
+            json_data_obj = content['map_reduce']
+            print(json_data_obj)
+            mapper = json_data_obj["mapper"]
+            key_delimiter = json_data_obj["key_delimiter"]
+            field_delimiter = json_data_obj["field_delimiter"]
+            destination_file = json_data_obj["destination_file"]
+            send_requests.map(mapper, field_delimiter, key_delimiter, destination_file)
             #send_requests.make_file(json_data_obj["destination_file"])
 
 
         elif 'append' in content:
-
             json_data_obj = content['append']
-
+            file_name = json_data_obj['file_name']
+            json_data = open("data\\files_info.json")
+            data_nodes_json_data= open('config\\json\\data_nodes.json')
+            data_nodes_data = json.load(data_nodes_json_data)['data_nodes']
+            data = json.load(json_data)
             json_data_obj = dict()
-            for item in data["data_nodes"]:
-                json_data_obj['data_node_ip']= 'http://' + item["data_node_address"]
+            for item in data['files']:
+                if item['file_name']==file_name:
+                    if not item['file_fragments']:
+                        json_data_obj['data_node_ip'] = 'http://' + data_nodes_data[0]['data_node_address']
+                    else:
+                        #id = (item['file_fragments'][-1]).keys()[0]
+                        id = 1
+                        for key, value in (item['file_fragments'][-1]).items():
+                            id = key
+                        for i in data_nodes_data:
+                            if i['data_node_id'] == int(id):
+                                prev_ind = data_nodes_data.index(i)
+                                if prev_ind+1 == len(data_nodes_data):
+                                    json_data_obj['data_node_ip'] = 'http://' + data_nodes_data[0]['data_node_address']
+                                else:
+                                    json_data_obj['data_node_ip'] = 'http://' + data_nodes_data[prev_ind+1]['data_node_address']
+
+            # for item in data["data_nodes"]:
+            #     json_data_obj['data_node_ip']= 'http://' + item["data_node_address"]
+
+
         elif 'refresh_table' in content:
             json_data_obj = content['refresh_table']
             with open(os.path.dirname(__file__) + "\\data\\files_info.json") as file:
@@ -75,9 +102,9 @@ class Handler(server.BaseHTTPRequestHandler):
                 if item['file_name'] == json_data_obj['file_name']:
                     id = ''
                     for i in data['data_nodes']:
-                        print("VALIK    ")
+
                         if i['data_node_address'] == json_data_obj['ip'].split('//')[1]:
-                            print("LOH")
+
                             id = i['data_node_id']
                     item['file_fragments'].append(
                         {
