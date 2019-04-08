@@ -1,32 +1,41 @@
-from http import server
 import json
 import os
+import requests
+from http import server
 from multiprocessing import Process
+
 from communication import send_requests
 
+data_nodes_json_data = open('config\\json\\data_nodes.json')
+data_nodes_data = json.load(data_nodes_json_data)['data_nodes']
+N = len(data_nodes_data)
+counter = 0
+list_of_min=list()
+list_of_max=list()
 class Handler(server.BaseHTTPRequestHandler):
+
+
     def do_POST(self):
         self.send_response(200)
         self.end_headers()
         body_length = int(self.headers['content-length'])
         request_body_json_string = self.rfile.read(body_length).decode('utf-8')
-        
+
         # Printing  some info to the server console
         print('Server on port ' + str(self.server.server_port) + ' - request body: ' + request_body_json_string)
-        
+
         json_data_obj = json.loads(request_body_json_string)
         json_data_obj['SEEN_BY_THE_SERVER'] = 'Yes'
 
+        # print(self.request)
 
-        #print(self.request)
+        # print(request_body_json_string)
 
-        #print(request_body_json_string)
-
-        #print(request_body_json_string["dest_file"])
+        # print(request_body_json_string["dest_file"])
         # Sending data to the client
-        self.wfile.write(bytes(json.dumps( self.recognize_command(json_data_obj)), 'utf-8'))
+        self.wfile.write(bytes(json.dumps(self.recognize_command(json_data_obj)), 'utf-8'))
 
-    def recognize_command(self,content):
+    def recognize_command(self, content):
         json_data_obj = dict()
 
         json_data = open(os.path.dirname(__file__) + "\\config\\json\\data_nodes.json")
@@ -50,7 +59,6 @@ class Handler(server.BaseHTTPRequestHandler):
 
             json_data_obj.clear()
 
-
             json_data_obj['distribution'] = data['distribution']
 
         elif 'map_reduce' in content:
@@ -62,33 +70,34 @@ class Handler(server.BaseHTTPRequestHandler):
             field_delimiter = json_data_obj["field_delimiter"]
             destination_file = json_data_obj["destination_file"]
             send_requests.map(mapper, field_delimiter, key_delimiter, destination_file)
-            #send_requests.make_file(json_data_obj["destination_file"])
+            # send_requests.make_file(json_data_obj["destination_file"])
 
 
         elif 'append' in content:
             json_data_obj = content['append']
             file_name = json_data_obj['file_name']
             json_data = open("data\\files_info.json")
-            data_nodes_json_data= open('config\\json\\data_nodes.json')
+            data_nodes_json_data = open('config\\json\\data_nodes.json')
             data_nodes_data = json.load(data_nodes_json_data)['data_nodes']
             data = json.load(json_data)
             json_data_obj = dict()
             for item in data['files']:
-                if item['file_name']==file_name:
+                if item['file_name'] == file_name:
                     if not item['file_fragments']:
                         json_data_obj['data_node_ip'] = 'http://' + data_nodes_data[0]['data_node_address']
                     else:
-                        #id = (item['file_fragments'][-1]).keys()[0]
+                        # id = (item['file_fragments'][-1]).keys()[0]
                         id = 1
                         for key, value in (item['file_fragments'][-1]).items():
                             id = key
                         for i in data_nodes_data:
                             if i['data_node_id'] == int(id):
                                 prev_ind = data_nodes_data.index(i)
-                                if prev_ind+1 == len(data_nodes_data):
+                                if prev_ind + 1 == len(data_nodes_data):
                                     json_data_obj['data_node_ip'] = 'http://' + data_nodes_data[0]['data_node_address']
                                 else:
-                                    json_data_obj['data_node_ip'] = 'http://' + data_nodes_data[prev_ind+1]['data_node_address']
+                                    json_data_obj['data_node_ip'] = 'http://' + data_nodes_data[prev_ind + 1][
+                                        'data_node_address']
 
             # for item in data["data_nodes"]:
             #     json_data_obj['data_node_ip']= 'http://' + item["data_node_address"]
@@ -104,7 +113,6 @@ class Handler(server.BaseHTTPRequestHandler):
                     for i in data['data_nodes']:
 
                         if i['data_node_address'] == json_data_obj['ip'].split('//')[1]:
-
                             id = i['data_node_id']
                     item['file_fragments'].append(
                         {
@@ -114,6 +122,45 @@ class Handler(server.BaseHTTPRequestHandler):
             with open(os.path.dirname(__file__) + "\\data\\files_info.json", 'w') as file:
                 json.dump(file_info, file, indent=4)
 
+        elif 'hash' in content:
+            json_data_obj = content['hash']
+            list_of_max.append(json_data_obj['list_keys'][0])
+            list_of_min.append(json_data_obj['list_keys'][1])
+            global counter
+            global N
+            counter += 1
+            print("Counter = ", counter)
+            print(N)
+            if counter == N:
+                print("MINMAX")
+                print()
+                max_hash =max(list_of_max)
+                min_hash = min(list_of_min)
+                step = (max_hash - min_hash)/N
+                print(max_hash)
+                print(min_hash)
+                print(step)
+                context = {
+                    'shuffle':{
+                    'nodes_keys':[ ],
+                    'max_hash':max_hash,
+                    'file_name':json_data_obj['file_name']
+                }
+                }
+                mid_hash = min_hash
+                for i in data['data_nodes']:
+
+                    context['shuffle']['nodes_keys'].append({
+                        'data_node_ip':i['data_node_address'],
+                        'hash_keys_range':[mid_hash,mid_hash+step]
+                    })
+                    mid_hash += step
+
+                for i in data['data_nodes']:
+                    url = 'http://' + i["data_node_address"]
+                    response = requests.post(url, data=json.dumps(context))
+                counter=0
+
         return json_data_obj
 
 
@@ -122,12 +169,11 @@ def start_server(server_address):
     print(str(server_address) + ' Waiting for POST requests...')
     my_server.serve_forever()
 
+
 def start_local_server_on_port(port):
     p = Process(target=start_server, args=(('127.0.0.1', port),))
     p.start()
 
-if(__name__ == '__main__'):
+
+if (__name__ == '__main__'):
     start_local_server_on_port(8011)
-
-
-
