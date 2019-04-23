@@ -6,14 +6,15 @@ from multiprocessing import Process
 
 from communication import send_requests
 
-data_nodes_json_data = open('config\\json\\data_nodes.json')
+data_nodes_json_data = open(os.path.join('config', 'json', 'data_nodes.json'))
 data_nodes_data = json.load(data_nodes_json_data)['data_nodes']
 N = len(data_nodes_data)
 counter = 0
-list_of_min=list()
-list_of_max=list()
-class Handler(server.BaseHTTPRequestHandler):
+list_of_min = list()
+list_of_max = list()
 
+
+class Handler(server.BaseHTTPRequestHandler):
 
     def do_POST(self):
         self.send_response(200)
@@ -38,13 +39,13 @@ class Handler(server.BaseHTTPRequestHandler):
     def recognize_command(self, content):
         json_data_obj = dict()
 
-        json_data = open(os.path.dirname(__file__) + "\\config\\json\\data_nodes.json")
+        json_data = open(os.path.join(os.path.dirname(__file__), 'config', 'json', 'data_nodes.json'))
         data = json.load(json_data)
         json_data.close()
         if 'make_file' in content:
             json_data_obj = content['make_file']
             send_requests.make_file(json_data_obj["destination_file"])
-            with open(os.path.dirname(__file__) + "\\data\\files_info.json") as file:
+            with open(os.path.join(os.path.dirname(__file__), 'data', 'files_info.json')) as file:
                 file_info = json.loads(file.read())
             file_info['files'].append(
                 {
@@ -54,7 +55,7 @@ class Handler(server.BaseHTTPRequestHandler):
                     "file_fragments": []
                 }
             )
-            with open(os.path.dirname(__file__) + "\\data\\files_info.json", 'w') as file:
+            with open(os.path.join(os.path.dirname(__file__), 'data', 'files_info.json'), 'w') as file:
                 json.dump(file_info, file, indent=4)
 
             json_data_obj.clear()
@@ -76,8 +77,8 @@ class Handler(server.BaseHTTPRequestHandler):
         elif 'append' in content:
             json_data_obj = content['append']
             file_name = json_data_obj['file_name']
-            json_data = open("data\\files_info.json")
-            data_nodes_json_data = open('config\\json\\data_nodes.json')
+            json_data = open(os.path.join(os.path.dirname(__file__), 'data', 'files_info.json'))
+            data_nodes_json_data = open(os.path.join(os.path.dirname(__file__), 'config', 'json', 'data_nodes.json'))
             data_nodes_data = json.load(data_nodes_json_data)['data_nodes']
             data = json.load(json_data)
             json_data_obj = dict()
@@ -105,7 +106,7 @@ class Handler(server.BaseHTTPRequestHandler):
 
         elif 'refresh_table' in content:
             json_data_obj = content['refresh_table']
-            with open(os.path.dirname(__file__) + "\\data\\files_info.json") as file:
+            with open(os.path.join(os.path.dirname(__file__), 'data', 'files_info.json')) as file:
                 file_info = json.loads(file.read())
             for item in file_info['files']:
                 if item['file_name'] == json_data_obj['file_name']:
@@ -119,7 +120,7 @@ class Handler(server.BaseHTTPRequestHandler):
                             id: json_data_obj['segment_name']
                         }
                     )
-            with open(os.path.dirname(__file__) + "\\data\\files_info.json", 'w') as file:
+            with open(os.path.join(os.path.dirname(__file__), 'data', 'files_info.json'), 'w')as file:
                 json.dump(file_info, file, indent=4)
 
         elif 'hash' in content:
@@ -134,32 +135,31 @@ class Handler(server.BaseHTTPRequestHandler):
             if counter == N:
                 print("MINMAX")
                 print()
-                max_hash =max(list_of_max)
+                max_hash = max(list_of_max)
                 min_hash = min(list_of_min)
-                step = (max_hash - min_hash)/N
+                step = (max_hash - min_hash) / N
                 print(max_hash)
                 print(min_hash)
                 print(step)
                 context = {
-                    'shuffle':{
-                    'nodes_keys':[ ],
-                    'max_hash':max_hash,
-                    'file_name':json_data_obj['file_name']
-                }
+                    'shuffle': {
+                        'nodes_keys': [],
+                        'max_hash': max_hash,
+                        'file_name': json_data_obj['file_name']
+                    }
                 }
                 mid_hash = min_hash
                 for i in data['data_nodes']:
-
                     context['shuffle']['nodes_keys'].append({
-                        'data_node_ip':i['data_node_address'],
-                        'hash_keys_range':[mid_hash,mid_hash+step]
+                        'data_node_ip': i['data_node_address'],
+                        'hash_keys_range': [mid_hash, mid_hash + step]
                     })
                     mid_hash += step
 
                 for i in data['data_nodes']:
                     url = 'http://' + i["data_node_address"]
                     response = requests.post(url, data=json.dumps(context))
-                counter=0
+                counter = 0
 
         return json_data_obj
 
