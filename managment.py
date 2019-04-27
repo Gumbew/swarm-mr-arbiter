@@ -172,5 +172,5 @@ def start_local_server_on_port(port):
     p.start()
 
 
-if (__name__ == '__main__'):
+if __name__ == '__main__':
     start_local_server_on_port(8011)
