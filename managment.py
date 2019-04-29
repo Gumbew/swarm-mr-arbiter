@@ -70,8 +70,9 @@ class Handler(server.BaseHTTPRequestHandler):
             key_delimiter = json_data_obj["key_delimiter"]
             field_delimiter = json_data_obj["field_delimiter"]
             destination_file = json_data_obj["destination_file"]
+            reducer = json_data_obj['reducer']
             send_requests.map(mapper, field_delimiter, key_delimiter, destination_file)
-
+            send_requests.reduce(reducer, key_delimiter, destination_file)
 
         elif 'append' in content:
             print('APPEND_RUNNING')
@@ -157,6 +158,12 @@ class Handler(server.BaseHTTPRequestHandler):
                     url = 'http://' + i["data_node_address"]
                     response = requests.post(url, data=json.dumps(context))
                 counter = 0
+        elif 'clear_data' in content:
+            print('CLEAR_DATA_ARBITER')
+            json_data_obj = content['clear_data']
+            folder_name = json_data_obj['folder_name']
+            send_requests.clear_data(folder_name)
+            print('CLEAR_DATA_ARBITER_FINISHED')
 
         return json_data_obj
 
