@@ -13,13 +13,13 @@ def make_file(file_name):
     diction["make_file"] = {
         "file_name": file_name
     }
+
     for item in data["data_nodes"]:
         url = 'http://' + item["data_node_address"]
 
         response = requests.post(url, data=json.dumps(diction))
 
         response.raise_for_status()
-        print(response.json())
     return response.json()
 
 
@@ -36,11 +36,8 @@ def map(mapper, field_delimiter, key_delimiter, destination_file):
     }
     for item in data["data_nodes"]:
         url = 'http://' + item["data_node_address"]
-
         response = requests.post(url, data=json.dumps(diction))
-
         response.raise_for_status()
-        print(response.json())
     return response.json()
 
 
@@ -60,12 +57,10 @@ def reduce(reducer, key_delimiter, destination_file):
         response = requests.post(url, data=json.dumps(diction))
 
         response.raise_for_status()
-        print(response.json())
     return response.json()
 
 
 def clear_data(folder_name):
-    print('CLEAR_DATA_STARTED')
     diction = dict()
     diction['clear_data'] = {
         'folder_name': folder_name
@@ -77,5 +72,4 @@ def clear_data(folder_name):
         url = 'http://' + item['data_node_address']
         response = requests.post(url, data=json.dumps(diction))
         response.raise_for_status()
-    print('CLEAR_DATA_FINISHED')
     return response.json()

@@ -1,5 +1,5 @@
 {
-  "distribution": 4,
+  "distribution": 2,
   "data_nodes": [
     {
       "data_node_id": 1,
@@ -8,6 +8,10 @@
     {
       "data_node_id": 2,
       "data_node_address": "127.0.0.1:8015"
+    },
+    {
+      "data_node_id": 3,
+      "data_node_address": "127.0.0.1:8016"
     }
   ]
 }
