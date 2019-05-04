@@ -1,5 +1,20 @@
 {
     "files": [
-
+        {
+            "file_name": "C:/Users/Anchi/workspace/swarm-mr-client\\..\\..\\client_data\\out.txt",
+            "lock": false,
+            "last_fragment_block_size": 1024,
+            "file_fragments": [
+                {
+                    "1": "f1"
+                },
+                {
+                    "2": "f2"
+                },
+                {
+                    "1": "f3"
+                }
+            ]
+        }
     ]
 }

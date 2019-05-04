@@ -139,11 +139,14 @@ class Handler(server.BaseHTTPRequestHandler):
                 max_hash = max(list_of_max)
                 min_hash = min(list_of_min)
                 step = (max_hash - min_hash) / N
+                print("FILE_NAME_IN_HASH")
+                print(json_data_obj['file_name'])
                 context = {
                     'shuffle': {
                         'nodes_keys': [],
                         'max_hash': max_hash,
                         'file_name': json_data_obj['file_name']
+
                     }
                 }
                 mid_hash = min_hash
