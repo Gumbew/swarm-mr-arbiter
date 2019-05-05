@@ -158,6 +158,17 @@ class Handler(server.BaseHTTPRequestHandler):
 			folder_name = json_data_obj['folder_name']
 			send_requests.clear_data(folder_name)
 
+		elif 'get_file' in content:
+			json_data_obj = content['get_file']
+			file_name = json_data_obj['file_name']
+			context=dict()
+			context['data_nodes_ip']=list()
+			for i in data_nodes_data_json['data_nodes']:
+				url = 'http://' + i["data_node_address"]
+				context['data_nodes_ip'].append(url)
+			json_data_obj=context
+			print(context)
+
 		return json_data_obj
 
 
