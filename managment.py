@@ -51,6 +51,7 @@ class Handler(server.BaseHTTPRequestHandler):
 					"file_name": json_data_obj["destination_file"],
 					"lock": False,
 					"last_fragment_block_size": 1024,
+					"key_ranges": None,
 					"file_fragments": []
 				}
 			)
@@ -148,6 +149,20 @@ class Handler(server.BaseHTTPRequestHandler):
 					})
 					mid_hash += step
 
+				files_info_file = open(os.path.join(os.path.dirname(__file__), 'data', 'files_info.json'))
+				files_info_file_json = json.load(files_info_file)
+				files_info_file.close()
+				for i in files_info_file_json['files']:
+					arr =json_data_obj['file_name'].split('.')
+					file_name = arr[0].split('_')[0]+'.' + arr[-1]
+					if file_name == i['file_name'].split(os.sep)[-1]:
+							print(context['shuffle']['nodes_keys'])
+							i['key_ranges']=context['shuffle']['nodes_keys']
+
+
+				with open(os.path.join(os.path.dirname(__file__), 'data', 'files_info.json'), 'w')as file:
+					json.dump(files_info_file_json, file, indent=4)
+
 				for i in data_nodes_data_json['data_nodes']:
 					url = 'http://' + i["data_node_address"]
 					response = requests.post(url, data=json.dumps(context))
@@ -167,8 +182,23 @@ class Handler(server.BaseHTTPRequestHandler):
 				url = 'http://' + i["data_node_address"]
 				context['data_nodes_ip'].append(url)
 			json_data_obj=context
-			print(context)
 
+		elif 'get_result_of_key' in content:
+			json_data_obj = content['get_result_of_key']
+			key = json_data_obj['key']
+			file_name = json_data_obj['file_name']
+			context=dict()
+			files_info_file = open(os.path.join(os.path.dirname(__file__), 'data', 'files_info.json'))
+			files_info_file_json = json.load(files_info_file)
+			files_info_file.close()
+			json_data_obj.clear()
+			for item in files_info_file_json['files']:
+				if item['file_name']==file_name:
+					json_data_obj["key_ranges"] = item["key_ranges"]
+			url = 'http://' + data_nodes_data_json['data_nodes'][0]["data_node_address"]
+			context['get_hash_of_key']=key
+			response = requests.post(url, data=json.dumps(context))
+			json_data_obj['hash_key'] = response.json()
 		return json_data_obj
 
 

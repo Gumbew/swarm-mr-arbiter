@@ -1,9 +1,32 @@
 {
     "files": [
         {
-            "file_name": "/home/gumbew/workspace/Kursova/swarm-mr-client/../../client_data/out.txt",
+            "file_name": "out.txt",
             "lock": false,
             "last_fragment_block_size": 1024,
+            "key_ranges": [
+                {
+                    "data_node_ip": "127.0.0.1:8014",
+                    "hash_keys_range": [
+                        610,
+                        616.3333333333334
+                    ]
+                },
+                {
+                    "data_node_ip": "127.0.0.1:8015",
+                    "hash_keys_range": [
+                        616.3333333333334,
+                        622.6666666666667
+                    ]
+                },
+                {
+                    "data_node_ip": "127.0.0.1:8016",
+                    "hash_keys_range": [
+                        622.6666666666667,
+                        629.0000000000001
+                    ]
+                }
+            ],
             "file_fragments": [
                 {
                     "1": "f1"
