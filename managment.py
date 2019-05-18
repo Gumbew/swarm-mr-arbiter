@@ -164,9 +164,7 @@ class Handler(server.BaseHTTPRequestHandler):
 				counter = 0
 
 		elif 'clear_data' in content:
-			json_data_obj = content['clear_data']
-			folder_name = json_data_obj['folder_name']
-			send_requests.clear_data(folder_name)
+			send_requests.clear_data(content)
 
 		elif 'get_file' in content:
 			json_data_obj = content['get_file']
