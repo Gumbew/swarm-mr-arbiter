@@ -63,13 +63,8 @@ class Handler(server.BaseHTTPRequestHandler):
 
 		elif 'map_reduce' in content:
 			json_data_obj = content['map_reduce']
-			mapper = json_data_obj["mapper"]
-			key_delimiter = json_data_obj["key_delimiter"]
-			field_delimiter = json_data_obj["field_delimiter"]
-			destination_file = json_data_obj["destination_file"]
-			reducer = json_data_obj['reducer']
-			send_requests.map(mapper, field_delimiter, key_delimiter, destination_file)
-			send_requests.reduce(reducer, key_delimiter, destination_file)
+			send_requests.map(json_data_obj)
+			send_requests.reduce(json_data_obj)
 
 		elif 'append' in content:
 			json_data_obj = content['append']
